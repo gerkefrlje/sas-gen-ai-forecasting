@@ -1,0 +1,73 @@
+{
+  "creationTimeStamp" : null,
+  "modifiedTimeStamp" : null,
+  "createdBy" : null,
+  "modifiedBy" : null,
+  "id" : null,
+  "name" : "LSTM TensorFlow Forecasting",
+  "description" : "LSTM Forecasting with the EXTLANG Package and TensorFlow.",
+  "revision" : 0,
+  "version" : 3,
+  "prototype" : {
+    "creationTimeStamp" : null,
+    "modifiedTimeStamp" : null,
+    "createdBy" : null,
+    "modifiedBy" : null,
+    "id" : null,
+    "name" : "LSTM TensorFlow Forecasting",
+    "description" : "LSTM Forecasting with the EXTLANG Package and TensorFlow.",
+    "revision" : 0,
+    "iconCode" : null,
+    "imageUri" : null,
+    "executionProviderId" : "Compute",
+    "code" : null,
+    "classification" : null,
+    "group" : null,
+    "status" : "undefined",
+    "componentProperties" : {
+      "_BATCH_SIZE" : 16,
+      "_ES_MIN_DELTA" : 0.01,
+      "_ES_PATIENCE" : 5,
+      "_LEARNING_RATE" : 0.01,
+      "_MAXEPOCH" : 100,
+      "_NINPUT" : 12,
+      "_NUM_LSTM_LAYER" : 30,
+      "_SEED" : 12345,
+      "_arimaxInclude" : true,
+      "_esmInclude" : true,
+      "_holdoutSampleSize" : 0,
+      "_idmInclude" : false,
+      "_idmMethod" : "BEST",
+      "_intermittencySensitivity" : 2,
+      "_minobs" : 1,
+      "_minobsSeason" : 2,
+      "_minobsTrend" : 1,
+      "_selectionCriteria" : "MAPE",
+      "_ucmInclude" : false,
+      "dataSpecification" : {
+        "outAttributesList" : [ {
+          "columns" : [ "NOBS", "N", "NMISS", "MIN", "MAX", "MEAN", "STDDEV", "_STATUS_" ],
+          "name" : "OUTSUM"
+        }, {
+          "columns" : [ "_REGION_", "_SELECT_", "_MODEL_", "DFE", "N", "NOBS", "NMISSA", "NMISSP", "NPARMS", "TSS", "SST", "SSE", "MSE", "RMSE", "UMSE", "URMSE", "MAPE", "MAE", "RSQUARE", "ADJRSQ", "AADJRSQ", "RWRSQ", "AIC", "AICC", "SBC", "APC", "MAXERR", "MINERR", "MAXPE", "MINPE", "ME", "MPE", "MDAPE", "GMAPE", "MINPPE", "MAXPPE", "MPPE", "MAPPE", "MDAPPE", "GMAPPE", "MINSPE", "MAXSPE", "MSPE", "SMAPE", "MDASPE", "GMASPE", "MINRE", "MAXRE", "MRE", "MRAE", "MDRAE", "GMRAE", "MASE", "MINAPES", "MAXAPES", "MAPES", "MDAPES", "GMAPES" ],
+          "name" : "OUTSTAT"
+        }, {
+          "columns" : [ "_MODEL_", "_MODELTYPE_", "_DEPTRANS_", "_SEASONAL_", "_TREND_", "_INPUTS_", "_EVENTS_", "_OUTLIERS_", "_STATUS_", "_SOURCE_" ],
+          "name" : "OUTMODELINFO"
+        } ]
+      }
+    },
+    "systemAttributes" : null,
+    "validationModel" : null,
+    "validationErrors" : null,
+    "version" : 3,
+    "componentPropertyMetadata" : { },
+    "eTag" : "W/\"1707724940874972000\""
+  },
+  "applicationId" : "forecasting",
+  "classification" : "pluggable",
+  "providerId" : "CustomTemplate",
+  "group" : "modeling",
+  "hidden" : false,
+  "eTag" : "W/\"1687184062560514000\""
+}
