@@ -4,8 +4,8 @@
   "createdBy" : null,
   "modifiedBy" : null,
   "id" : null,
-  "name" : "LSTM TensorFlow Forecasting",
-  "description" : "LSTM Forecasting with the EXTLANG Package and TensorFlow.",
+  "name" : "Foundation Forecasting Model",
+  "description" : "Time Series Forecasting using a Foundation Forecasting Model.",
   "revision" : 0,
   "version" : 3,
   "prototype" : {
@@ -14,8 +14,8 @@
     "createdBy" : null,
     "modifiedBy" : null,
     "id" : null,
-    "name" : "LSTM TensorFlow Forecasting",
-    "description" : "LSTM Forecasting with the EXTLANG Package and TensorFlow.",
+    "name" : "Foundation Forecasting Model",
+    "description" : "Time Series Forecasting using a Foundation Forecasting Model.",
     "revision" : 0,
     "iconCode" : null,
     "imageUri" : null,
@@ -25,17 +25,12 @@
     "group" : null,
     "status" : "undefined",
     "componentProperties" : {
-      "_BATCH_SIZE" : 16,
-      "_ES_MIN_DELTA" : 0.01,
-      "_ES_PATIENCE" : 5,
-      "_LEARNING_RATE" : 0.01,
-      "_MAXEPOCH" : 100,
-      "_NINPUT" : 12,
-      "_NUM_LSTM_LAYER" : 30,
-      "_SEED" : 12345,
-      "_arimaxInclude" : true,
-      "_esmInclude" : true,
-      "_holdoutSampleSize" : 0,
+      "_CHRONOS_ENDPOINT": "",
+      "_PREDICTION_LENGTH": 20,
+      "_NUM_SAMPLES": 30,
+      "_TEMPERATURE": 1,
+      "_TOP_K": 50,
+      "_TOP_P": 1,
       "_idmInclude" : false,
       "_idmMethod" : "BEST",
       "_intermittencySensitivity" : 2,
@@ -62,12 +57,12 @@
     "validationErrors" : null,
     "version" : 3,
     "componentPropertyMetadata" : { },
-    "eTag" : "W/\"1707724940874972000\""
+    "eTag" : "W/\"1620053011943485000\""
   },
   "applicationId" : "forecasting",
   "classification" : "pluggable",
   "providerId" : "CustomTemplate",
   "group" : "modeling",
   "hidden" : false,
-  "eTag" : "W/\"1687184062560514000\""
-}
+  "eTag" : "W/\"1620053011943410000\""
+ }

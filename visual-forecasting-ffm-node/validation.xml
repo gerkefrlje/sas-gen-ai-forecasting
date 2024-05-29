@@ -1,73 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<validationModel eTag="W/&quot;1687184064708152000&quot;" description="LSTM Forecasting with the EXTLANG Package and TensorFlow." name="LSTM TensorFlow Forecasting" revision="0">
-    <links/>
-    <version>3</version>
-    <properties>
-        <group style="nested" displayName="TensorFlow Keras Model Options" array="false" enabledWhen="" enabledWhenValue="true">
+<validationModel eTag="&quot;Y29tLnNhcy5hbmFseXRpY3MudmFsaWRhdGlvbi5yZXByZXNlbnRhdGlvbnMuVmFsaWRhdGlvbk1vZGVs1&quot;" description="Time Series Forecasting using a Foundation Forecasting Model." name="Foundation Forecasting Model" revision="0">
+     <links/>
+     <version>3</version>
+     <properties>
+         <group style="nested" displayName="Foundation Forecasting Model Options" array="false" enabledWhenValue="false">
             <clientProperties>
-                <property name="initialState">
-                    <value>collapsed</value>
+                 <property name="initialState">
+                     <value>collapsed</value>
                 </property>
             </clientProperties>
             <properties>
-                <property type="integer" required="true" selector="false" id="6e263c0f-4ef6-44af-9698-be6a27285039" name="_NINPUT" displayName="Input Window Width" array="false" enabledWhen="" enabledWhenValue="true">
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_PREDICTION_LENGTH" displayName="Amount of Predicted Time Steps" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
-                <property type="integer" required="true" selector="false" id="56626fba-8215-4aad-a0cf-81b7c533344e" name="_NUM_LSTM_LAYER" displayName="Maximum number of LSTM Layer" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="integer" required="true" selector="false" id="e43c8ba8-e620-448c-b026-a0d81ff67b77" name="_MAXEPOCH" displayName="Maximum Number of Epochs" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="double" required="true" selector="false" id="f9eac6cd-073a-4900-b28c-0c4df437ef5a" name="_LEARNING_RATE" displayName="Learning Rate For Optimizer" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="integer" required="true" selector="false" id="0aab9416-abef-4e28-92f4-a3b09eabe2dd" name="_BATCH_SIZE" displayName="Minibatch Size" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="integer" required="true" selector="false" id="333ba257-02a5-4946-adb1-13aed534e2dd" name="_SEED" displayName="Seed For Random Number" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="double" required="true" selector="false" id="757ee573-a0c5-4c0d-bbd0-e31ac0dbf237" name="_ES_MIN_DELTA" displayName="Early Stopping Delta Parameter" array="false" enabledWhen="" enabledWhenValue="true">
-                    <clientProperties/>
-                    <constraints/>
-                </property>
-                <property type="integer" required="true" selector="false" id="a38f42d2-a8ad-406b-a1e0-ff092f6a5d30" name="_ES_PATIENCE" displayName="Early Stopping Stagnation Parameter" array="false" enabledWhen="" enabledWhenValue="true">
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_NUM_SAMPLES" displayName="Number of Sample Paths" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
             </properties>
         </group>
-        <group style="nested" displayName="Model Selection" array="false" enabledWhen="" enabledWhenValue="true">
+        <group style="nested" displayName="Sample Token Generation Options" array="false" enabledWhenValue="false">
             <clientProperties>
-                <property name="initialState">
-                    <value>collapsed</value>
+                 <property name="initialState">
+                     <value>collapsed</value>
                 </property>
             </clientProperties>
             <properties>
-                <property type="integer" required="true" selector="false" id="3c51eab1-cd62-4f11-9611-65957f3faf83" name="_holdoutSampleSize" displayName="Number of data points used in the holdout sample" description="Specifies the number of data points used for validation." array="false" enabledWhen="" enabledWhenValue="true">
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TEMPERATURE" displayName="Temperature used in Sample Token Generation" array="false" enabledWhenValue="false">
                     <clientProperties/>
-                    <constraints>
-                        <range min="0" includeMin="true" includeMax="true" enabledWhen="" enabledWhenValue="true"/>
-                    </constraints>
+                    <constraints/>
                 </property>
-                <property type="double" required="false" selector="false" id="8077b2bc-709d-4944-a370-e1cfec3cbae4" name="_holdoutSamplePercent" displayName="Percentage of data points used in the holdout sample" description="Specifies the maximum percentage of data points used for validation. Holdout percentage will override holdout size if it results in fewer observations." array="false" enabledWhen="_holdoutSampleSize &gt;=1" enabledWhenValue="true">
-                    <clientProperties>
-                        <property name="hideWhenDisabled">
-                            <value>true</value>
-                        </property>
-                    </clientProperties>
-                    <constraints>
-                        <range min="0" max="100" includeMin="true" includeMax="false" enabledWhen="" enabledWhenValue="true"/>
-                    </constraints>
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_K" displayName="Top-k parameter used in Sample Token Generation" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_P" displayName="Top-p parameter used in Sample Token Generation" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
                 </property>
             </properties>
         </group>
+        <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_CHRONOS_ENDPOINT" displayName="Endpoint for the Chronos Model" array="false" enabledWhenValue="false">
+            <clientProperties/>
+            <constraints/>
+        </property>
     </properties>
 </validationModel>
