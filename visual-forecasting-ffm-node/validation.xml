@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<validationModel eTag="&quot;Y29tLnNhcy5hbmFseXRpY3MudmFsaWRhdGlvbi5yZXByZXNlbnRhdGlvbnMuVmFsaWRhdGlvbk1vZGVs1&quot;" description="Time Series Forecasting using a Foundation Forecasting Model." name="Foundation Forecasting Model" revision="0">
+     <links/>
+     <version>3</version>
+     <properties>
+        <property type="string" required="true" selector="false" id="fe4744e3-9c37-45a2-ad47-aead1ec0ccb3" name="_MODEL_SELECTION" displayName="Forecasting Model" array="false" enabledWhen="" enabledWhenValue="true">
+            <constraints>
+                <choicelist enabledWhen="" enabledWhenValue="true">
+                    <choice value="CHRONOS" displayValue="Chronos Forecasting"/>
+                    <choice value="BLANK" displayValue="Placeholder"/>
+                </choicelist>
+            </constraints>
+        </property>
+        <group style="nested" displayName="Chronos Model Options" array="false" enabledWhen="_MODEL_SELECTION == 'CHRONOS'" enabledWhenValue="true">
+            <clientProperties>
+                 <property name="initialState">
+                     <value>collapsed</value>
+                </property>
+                <property name="hideWhenDisabled">
+                    <value>true</value>
+                </property>
+            </clientProperties>
+            <properties>
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_MODEL_DOMAIN" displayName="Model Domain" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_MODEL_ENDPOINT" displayName="Model REST Endpoint" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_NUM_SAMPLES" displayName="Number of Sample Paths" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TEMPERATURE" displayName="Token Generation Temperature" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_K" displayName="Token Generation Top-K" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_P" displayName="Token Generation Top-p" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+            </properties>
+        </group>
+    </properties>
+</validationModel>
