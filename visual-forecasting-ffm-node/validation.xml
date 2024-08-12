@@ -3,14 +3,29 @@
      <links/>
      <version>3</version>
      <properties>
-         <group style="nested" displayName="Foundation Forecasting Model Options" array="false" enabledWhenValue="false">
+        <property type="string" required="true" selector="false" id="fe4744e3-9c37-45a2-ad47-aead1ec0ccb3" name="_MODEL_SELECTION" displayName="Forecasting Model" array="false" enabledWhen="" enabledWhenValue="true">
+            <constraints>
+                <choicelist enabledWhen="" enabledWhenValue="true">
+                    <choice value="CHRONOS" displayValue="Chronos Forecasting"/>
+                    <choice value="BLANK" displayValue="Placeholder"/>
+                </choicelist>
+            </constraints>
+        </property>
+        <group style="nested" displayName="Chronos Model Options" array="false" enabledWhen="_MODEL_SELECTION == 'CHRONOS'" enabledWhenValue="true">
             <clientProperties>
                  <property name="initialState">
                      <value>collapsed</value>
                 </property>
+                <property name="hideWhenDisabled">
+                    <value>true</value>
+                </property>
             </clientProperties>
             <properties>
-                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_PREDICTION_LENGTH" displayName="Amount of Predicted Time Steps" array="false" enabledWhenValue="false">
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_MODEL_DOMAIN" displayName="Model Domain" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_MODEL_ENDPOINT" displayName="Model REST Endpoint" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
@@ -18,32 +33,19 @@
                     <clientProperties/>
                     <constraints/>
                 </property>
-            </properties>
-        </group>
-        <group style="nested" displayName="Sample Token Generation Options" array="false" enabledWhenValue="false">
-            <clientProperties>
-                 <property name="initialState">
-                     <value>collapsed</value>
-                </property>
-            </clientProperties>
-            <properties>
-                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TEMPERATURE" displayName="Temperature used in Sample Token Generation" array="false" enabledWhenValue="false">
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TEMPERATURE" displayName="Token Generation Temperature" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
-                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_K" displayName="Top-k parameter used in Sample Token Generation" array="false" enabledWhenValue="false">
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_K" displayName="Token Generation Top-K" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
-                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_P" displayName="Top-p parameter used in Sample Token Generation" array="false" enabledWhenValue="false">
+                <property type="double" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_TOP_P" displayName="Token Generation Top-p" array="false" enabledWhenValue="false">
                     <clientProperties/>
                     <constraints/>
                 </property>
             </properties>
         </group>
-        <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_CHRONOS_ENDPOINT" displayName="Endpoint for the Chronos Model" array="false" enabledWhenValue="false">
-            <clientProperties/>
-            <constraints/>
-        </property>
     </properties>
 </validationModel>

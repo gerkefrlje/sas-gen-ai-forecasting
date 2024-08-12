@@ -25,20 +25,13 @@
     "group" : null,
     "status" : "undefined",
     "componentProperties" : {
-      "_CHRONOS_ENDPOINT": "",
-      "_PREDICTION_LENGTH": 20,
+      "_MODEL_DOMAIN": "https://example.com",
+      "_MODEL_ENDPOINT": "/forecast/predict/",
+      "_MODEL_SELECTION": "CHRONOS",
       "_NUM_SAMPLES": 30,
       "_TEMPERATURE": 1,
       "_TOP_K": 50,
       "_TOP_P": 1,
-      "_idmInclude" : false,
-      "_idmMethod" : "BEST",
-      "_intermittencySensitivity" : 2,
-      "_minobs" : 1,
-      "_minobsSeason" : 2,
-      "_minobsTrend" : 1,
-      "_selectionCriteria" : "MAPE",
-      "_ucmInclude" : false,
       "dataSpecification" : {
         "outAttributesList" : [ {
           "columns" : [ "NOBS", "N", "NMISS", "MIN", "MAX", "MEAN", "STDDEV", "_STATUS_" ],
