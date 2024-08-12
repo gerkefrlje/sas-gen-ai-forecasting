@@ -1,13 +1,12 @@
 ods output OutInfo = _outInformation;
 
 proc tsmodel data=&vf_libIn.."&vf_inData"n lead = &vf_lead.
-            outobj=(outfor  = &vf_libOut.."&vf_outFor"n
-            outSelect = &vf_libOut.."&vf_outSelect"n
-            outStat = &vf_libOut.."&vf_outStat"n
-            outmodelinfo = &vf_libOut.."&vf_outModelInfo"n
-            outvarstatus=&vf_libOut..outvarstatus
-            pylog=&vf_libOut..pylog)
+            outobj=(	outfor  = &vf_libOut.."&vf_outFor"n
+                        outStat = &vf_libOut.."&vf_outStat"n
+                        outvarstatus=&vf_libOut..outvarstatus
+                        pylog=&vf_libOut..pylog	)
             outarray = &vf_libOut..outarray
+            outscalar = &vf_libOut..outscalar
             outlog = &vf_libOut.."&vf_outLog"n;
     id &vf_timeID interval = &vf_timeIDInterval setmissing = &vf_setMissing trimid = LEFT;
     %vf_varsTSMODEL;
@@ -16,120 +15,204 @@ proc tsmodel data=&vf_libIn.."&vf_inData"n lead = &vf_lead.
     %if "&vf_byVars" ne "" %then %do;
        by &vf_byVars;
     %end;
-    
-    outarray ffm_fcst;
-    require atsm tsm extlang;
-    submit;
-    
-    /* some TensorFlow Keras model options */
 
-    CHRONOS_ENDPOINT = "&_CHRONOS_ENDPOINT";      /* endpoint of the chronos model      */
-    PREDICTION_LENGTH = &_PREDICTION_LENGTH.;   /* maximum number of epochs           */
-    NUM_SAMPLES = &_NUM_SAMPLES.;               /* learning rate for optimizer        */
-    TEMPERATURE = &_TEMPERATURE.;               /* minibatch size                     */
-    TOP_K = &_TOP_K.;                           /* seed for random number             */ 
-    TOP_P = &_TOP_P.;                           /* early stopping delta parameter     */
-    
-    declare object py(PYTHON3); 
+    outarray ffm_fcst ffm_lfcst ffm_ufcst ffm_err ffm_stderr;
+    outscalars _NAME_ $16 _MODEL_ $16 _MODELTYPE_ $16 _DEPTRANS_ $16 _SEASONAL_ _TREND_ _INPUTS_ _EVENTS_ _OUTLIERS_ _SOURCE_ $16;
+
+    require tsm extlang;
+
+    submit;
+
+    MODEL_SELECTION = '&_model_selection';
+
+    CHRONOS_DOMAIN = '&_model_domain';          /* domain of the model                  */
+    CHRONOS_ENDPOINT = '&_model_endpoint';      /* endpoint of the chronos model        */
+    CHRONOS_URL = CHRONOS_DOMAIN || CHRONOS_ENDPOINT;
+
+    NUM_SAMPLES = &_num_samples.;               /* increases performance and runtime    */
+    TEMPERATURE = &_temperature.;               /* token generation temperature         */
+    TOP_K = &_top_k.;                           /* token generation Top-K               */
+    TOP_P = &_top_p.;                           /* token generation Top-p               */
+
+    declare object py(PYTHON3);
     rc = py.Initialize();
-    rc = py.AddVariable(&vf_depVar,'ALIAS','y') ;
+
+	rc = py.AddVariable(&vf_depVar,'ALIAS','TARGET') ;
     rc = py.AddVariable(&vf_timeID, 'ALIAS', 'ds');
-    rc = py.AddVariable(CHRONOS_ENDPOINT);
-    rc = py.AddVariable(PREDICTION_LENGTH);
+    rc = py.AddVariable(CHRONOS_URL);
     rc = py.AddVariable(_LEAD_); /*pass the predefined variable to TF*/ 
-    rc = py.AddVariable(PREDICTION_LENGTH);
     rc = py.AddVariable(NUM_SAMPLES);
     rc = py.AddVariable(TEMPERATURE);
     rc = py.AddVariable(TOP_K);
     rc = py.AddVariable(TOP_P);
-    rc = py.AddVariable(ffm_fcst,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'PREDICT'); 
+    rc = py.AddVariable(ffm_fcst,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'PREDICT');
+	rc = py.AddVariable(ffm_lfcst,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'LOWER');
+	rc = py.AddVariable(ffm_ufcst,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'UPPER');
+	rc = py.AddVariable(ffm_err,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'ERR');
+	rc = py.AddVariable(ffm_stderr,"READONLY","NO","ARRAYRESIZE","YES","ALIAS",'STDERR');
      * rc = py.AddEnvVariable('_TKMBPY_DEBUG_FILES_PATH', &log_folder);
 
-    rc = py.pushCodeLine('import requests');
-    rc = py.pushCodeLine('import json');
-    rc = py.pushCodeLine('import numpy as np');
-    rc = py.pushCodeLine('url = CHRONOS_ENDPOINT');
-    rc = py.pushCodeLine('prediction_lenth = int(PREDICTION_LENGTH)');
-    rc = py.pushCodeLine('num_samples = int(NUM_SAMPLES)');
-    rc = py.pushCodeLine('temperature = float(TEMPERATURE)');
-    rc = py.pushCodeLine('top_k = int(TOP_K)');
-    rc = py.pushCodeLine('top_p = float(TOP_P)');
-    rc = py.pushCodeLine('y = TARGET[0:len(TARGET)-lead]');
-    rc = py.pushCodeLine('payload = json.dumps({');
-    rc = py.pushCodeLine(' "prediction_length": prediction_length,');
-    rc = py.pushCodeLine(' "num_samples": num_samples,');
-    rc = py.pushCodeLine(' "temperature": temperature,');
-    rc = py.pushCodeLine(' "top_k": top_k',);
-    rc = py.pushCodeLine(' "top_p": top_p',);
-    rc = py.pushCodeLine(' "data": y');
-    rc = py.pushCodeLine('})');
-    rc = py.pushCodeLine('headers = {');
-    rc = py.pushCodeLine(' "Content-Type": "application/json"');
-    rc = py.pushCodeLine('}');
-    rc = py.pushCodeLine('response = requests.request("POST", url, headers=headers, data=payload)');
-    rc = py.pushCodeLine('forecast = response.text');
-    rc = py.pushCodeLine('forecast_np_array = np.genfromtxt(forecast.splitlines(), delimiter=",", skip_header=1');
-    rc = py.pushCodeLine('header = forecast.splitline()[0].split(",")');
-    rc = py.pushCodeLine('forecast_series_median = forecast_array[:, header.index("median")]');
-    rc = py.pushCodeLine('pred_time_series = np.concatenate((y, forecast_array_median))');
-    rc = py.pushCodeLine('PREDICT = pred_time_series');
-    rc = py.pushCodeLine('forecast_series_low = forecast_array[:, header.index("low")]');
-    rc = py.pushCodeLine('forecast_series_high = forecast_array[:, header.index("high")]');
-    rc = py.Run();  
-    /* Store the execution and resource usage statistics logs */
-    declare object pylog(OUTEXTLOG);
-    rc = pylog.Collect(py,'EXECUTION');
-    declare object outvarstatus(OUTEXTVARSTATUS);
-    rc = outvarstatus.Collect(py);
-    declare object pyExmSpec(EXMSPEC);
-    rc = pyExmSpec.open();
-    rc = pyExmSpec.setOption('METHOD','PERFECT');
-    rc = pyExmSpec.setOption('NLAGPCT',0);
-    rc = pyExmSpec.setOption('PREDICT','tf_fcst');
-    rc = pyExmSpec.close();
+	/* Packages needed for processing the call */
+    rc = py.pushCodeLine("import json");
+    rc = py.pushCodeLine("import math");
+    rc = py.pushCodeLine("import requests as req");
+    rc = py.pushCodeLine("import numpy as np");
+	
+	/* Import the variables set outside of the python code */
+    rc = py.pushCodeLine("url = CHRONOS_URL");
+    rc = py.pushCodeLine("prediction_length = int(_LEAD_)");
+    rc = py.pushCodeLine("num_samples = int(NUM_SAMPLES)");
+    rc = py.pushCodeLine("temperature = float(TEMPERATURE)");
+    rc = py.pushCodeLine("top_k = int(TOP_K)");
+    rc = py.pushCodeLine("top_p = float(TOP_P)");
     
-    declare object dataFrame(tsdf);
-    declare object diagnose(diagnose);
-    declare object diagSpec(diagspec);
-    declare object inselect(selspec); 
-    declare object forecast(foreng);
-    
-    /*initialize the tsdf object and assign the time series roles: setup dependent and independent variables*/
-    rc = dataFrame.initialize();
-    rc = dataFrame.AddSeries(ffm_fcst);
-    rc = dataFrame.addY(&vf_depVar);
-    
-    /*Run model selection and forecast*/                     
-    rc = inselect.Open(1); 
-    rc = inselect.AddFrom(pyExmSpec);
-    rc = inselect.close(); 
-    
-    /*initialize the foreng object with the diagnose result and run model selecting and generate forecasts;*/         
-    rc = forecast.initialize(dataFrame);
-    rc = forecast.AddFrom(inselect);
-    rc = forecast.setOption('lead', &vf_lead);
-    rc = forecast.setOption('back', &vf_back);
-    
-    %if "&vf_allowNegativeForecasts" eq "FALSE" %then %do;
-        rc = forecast.setOption('fcst.bd.lower',0);
-    %end;
-    rc = forecast.Run();
+    /****************************************************************** */
+    /* First, to get some fit statistics for the model, a prediction    */
+    /* is called on the last _LEAD_ points of the existing data.        */
+    /* Afterwards, it is run for the time window after the last given.  */
+    /****************************************************************** */
 
-    /*collect forecast results*/
-    declare object outFor(outFor);
-    declare object outSelect(outSelect);
-    declare object outStat(outStat);
-    declare object outModelInfo(outModelInfo);
+    /* Set the options for the model API call */
+    rc = py.pushCodeLine("payload = json.dumps({");
+    rc = py.pushCodeLine("	'prediction_length': prediction_length,");
+    rc = py.pushCodeLine("	'num_samples': num_samples,");
+    rc = py.pushCodeLine("	'temperature': temperature,");
+    rc = py.pushCodeLine("	'top_k': top_k,");
+    rc = py.pushCodeLine("	'top_p': top_p,");
+    rc = py.pushCodeLine("	'data': TARGET.tolist()[:-prediction_length]");
+    rc = py.pushCodeLine("})");
+    rc = py.pushCodeLine("headers = {'Content-Type': 'application/json'}");
 
-    /*collect the forecast and statistic-of-fit from the forgen object run results; */
-    rc = outFor.collect(forecast);
-    rc = outSelect.collect(forecast); 
-    rc = outStat.collect(forecast);  
-    rc = outModelInfo.collect(forecast);
-endsubmit;
+    /* The call will return a string with 3 (Median Forecast and limits of the 80% prediction interval) */
+	/* by X values, where X is the prediction length. The values are separated by commas.               */
+    rc = py.pushCodeLine("resp = req.post(url, headers=headers, data=payload, verify=False)");
+    
+	/* Process the resulting values into workable objects */
+    rc = py.pushCodeLine("forecast_validation = resp.text.splitlines()");
+    rc = py.pushCodeLine("forecast_validation_values = np.genfromtxt(forecast_validation, delimiter=',', skip_header=1)");
+
+    /* Repeat the above steps for the forecast horizon. */
+    rc = py.pushCodeLine("payload = json.dumps({");
+    rc = py.pushCodeLine("	'prediction_length': prediction_length,");
+    rc = py.pushCodeLine("	'num_samples': num_samples,");
+    rc = py.pushCodeLine("	'temperature': temperature,");
+    rc = py.pushCodeLine("	'top_k': top_k,");
+    rc = py.pushCodeLine("	'top_p': top_p,");
+    rc = py.pushCodeLine("	'data': TARGET.tolist()");
+    rc = py.pushCodeLine("})");
+    rc = py.pushCodeLine("headers = {'Content-Type': 'application/json'}");
+
+    rc = py.pushCodeLine("resp = req.post(url, headers=headers, data=payload, verify=False)");
+    
+    rc = py.pushCodeLine("forecast = resp.text.splitlines()");
+    rc = py.pushCodeLine("forecast_header = forecast[0].split(',')");
+    rc = py.pushCodeLine("forecast_values = np.genfromtxt(forecast, delimiter=',', skip_header=1)");
+
+	/* Generate an empty numpy ndarray so that the predicted values are appended at the right index */
+    rc = py.pushCodeLine("prediction = np.empty(TARGET.shape[0] - (2 * prediction_length))");
+    rc = py.pushCodeLine("prediction[:] = np.nan");
+
+	/* Repeat for the lower and upper prediction interval borders and the standard error */
+    rc = py.pushCodeLine("lower = np.empty(TARGET.shape[0] - (2 * prediction_length))");
+    rc = py.pushCodeLine("lower[:] = np.nan");
+	rc = py.pushCodeLine("upper = np.empty(TARGET.shape[0] - (2 * prediction_length))");
+    rc = py.pushCodeLine("upper[:] = np.nan");
+
+    
+    rc = py.pushCodeLine("prediction = np.concatenate((prediction, forecast_validation_values[:, forecast_header.index('median')]))");
+    rc = py.pushCodeLine("prediction = np.concatenate((prediction, forecast_values[:, forecast_header.index('median')]))");
+
+    
+    rc = py.pushCodeLine("lower = np.concatenate((lower, forecast_validation_values[:, forecast_header.index('low')]))");
+    rc = py.pushCodeLine("lower = np.concatenate((lower, forecast_values[:, forecast_header.index('low')]))");
+	
+    
+    rc = py.pushCodeLine("upper = np.concatenate((upper, forecast_validation_values[:, forecast_header.index('high')]))");
+    rc = py.pushCodeLine("upper = np.concatenate((upper, forecast_values[:, forecast_header.index('high')]))");
+
+    /* ALso create arrays for the prediction error and standard error of the interval */
+    rc = py.pushCodeLine("err = TARGET - prediction");
+
+	rc = py.pushCodeLine("interval_width = upper - lower");
+	rc = py.pushCodeLine("z_score = 1.28");
+	rc = py.pushCodeLine("stderr = interval_width / (2 * z_score)");
+
+    /* Map the arrays created in the python code to the SAS Series */
+	rc = py.pushCodeLine("PREDICT = prediction");
+	rc = py.pushCodeLine("LOWER = lower");
+	rc = py.pushCodeLine("UPPER = upper");
+	rc = py.pushCodeLine("ERR = err");
+	rc = py.pushCodeLine("STDERR = stderr");
+
+    rc = py.Run();
+
+	declare object pylog(OUTEXTLOG);
+	rc = pylog.Collect(py, 'EXECUTION');
+
+	declare object outvarstatus(OUTEXTVARSTATUS);
+	rc = outvarstatus.Collect(py);
+
+	declare object pyExmSpec(EXMSPEC);
+	rc = pyExmSpec.open();
+	rc = pyExmSpec.setOption('METHOD', 'PERFECT');
+	rc = pyExmSpec.setOption('NLAGPCT', 0);
+	rc = pyExmSpec.setOption('PREDICT', 'ffm_fcst');
+	rc = pyExmSpec.setOption('LOWER', 'ffm_lfcst');
+	rc = pyExmSpec.setOption('UPPER', 'ffm_ufcst');
+	rc = pyExmSpec.setOption('STDERR', 'ffm_stderr');
+	rc = pyExmSpec.close();
+
+    declare object tsm(tsm);
+
+	
+    rc = tsm.Initialize(pyExmSpec);
+    rc = tsm.AddExternal(ffm_fcst, 'PREDICT');
+	rc = tsm.AddExternal(ffm_lfcst, 'LOWER');
+	rc = tsm.AddExternal(ffm_ufcst, 'UPPER');
+    rc = tsm.AddExternal(ffm_err, 'ERROR');
+	rc = tsm.AddExternal(ffm_stderr, 'STDERR');
+	rc = tsm.SetY(&vf_depVar);
+	rc = tsm.SetOption('LEAD', &vf_lead);
+	rc = tsm.SetOption('ALPHA', 0.2);
+
+    rc = tsm.Run();
+
+	declare object outFor(tsmFor);
+	declare object outStat(tsmStat);
+
+	rc = outFor.collect(tsm);
+	rc = outFor.SetOption('MODELNAME', 'Chronos');
+	rc = outStat.collect(tsm);
+	rc = outStat.SetOption('MODELNAME', 'Chronos');
+
+    _NAME_ = vname(&vf_depVar);
+	_MODEL_ = "ffmModel";
+	_MODELTYPE_ = MODEL_SELECTION;
+	_DEPTRANS_ = "NONE";
+	_SEASONAL_ = 1;
+	_TREND_ = 1;
+	_INPUTS_ = 0;
+	_EVENTS_ = 0;
+	_OUTLIERS_ = 0;
+	_SOURCE_ = "TSM.EXMSPEC";
+
+	endsubmit;
 run;
 
-/* generate outinformation CAS table */
+/* Manually create OUTMODELINFO. Necessary since we use TSM instead */
+/* of ATSM and it does not generate this table automatically.       */
+data &vf_libOut.."&vf_outModelInfo"n;
+	retain _NAME_ _MODEL_ _MODELTYPE_ _DEPTRANS_ _SEASONAL_ _TREND_ _INPUTS_ _EVENTS_ _OUTLIERS_ _SOURCE_ _STATUS_;
+	set &vf_libOut..outscalar;
+run;
+
+/* ALso, the OUTSTAT table is missing the _SELECT_ column. */
+data &vf_libOut.."&vf_outStat"n;
+    set &vf_libOut.."&vf_outStat"n;
+    _SELECT_ = 'forecast';
+run;
+
+/* Generate outinformation CAS table */
 data &vf_libOut.."&vf_outInformation"n;
     set work._outInformation;
 run;
