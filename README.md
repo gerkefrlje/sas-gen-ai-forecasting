@@ -8,6 +8,6 @@ This repository contains files implementing Foundation Forecasting Models into S
 
 ## Supported Models
 
-|  | Model | Type |
-|--|-------|------|
-| ✔ | [Amazon Science Chronos Forecasting Model](https://github.com/amazon-science/chronos-forecasting) | VF Node |
+|  | Model |
+|--|-------|
+| ✔ | [Amazon Science Chronos Forecasting Model](https://github.com/amazon-science/chronos-forecasting) |
