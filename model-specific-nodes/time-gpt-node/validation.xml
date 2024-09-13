@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<validationModel eTag="&quot;Y29tLnNhcy5hbmFseXRpY3MudmFsaWRhdGlvbi5yZXByZXNlbnRhdGlvbnMuVmFsaWRhdGlvbk1vZGVs1&quot;" description="Time Series Forecasting using a Foundation Forecasting Model." name="Foundation Forecasting Model (Nixtla)" revision="0">
+     <links/>
+     <version>3</version>
+     <properties>
+        <property type="string" required="true" selector="false" id="fe4744e3-9c37-45a2-ad47-aead1ec0ccb3" name="_MODEL_SELECTION" displayName="Forecasting Model" array="false" enabledWhen="" enabledWhenValue="true">
+            <constraints>
+                <choicelist enabledWhen="" enabledWhenValue="true">
+                    <choice value="NIXTLA" displayValue="Nixtla TimeGPT"/>
+                </choicelist>
+            </constraints>
+        </property>
+        <group style="nested" displayName="Nixtla Model Options" array="false" enabledWhen="_MODEL_SELECTION == 'NIXTLA'" enabledWhenValue="true">
+            <clientProperties>
+                 <property name="initialState">
+                     <value>collapsed</value>
+                </property>
+                <property name="hideWhenDisabled">
+                    <value>true</value>
+                </property>
+            </clientProperties>
+            <properties>
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_API_KEY" displayName="Nixtla API Key" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="integer" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_FINETUNE_STEPS" displayName="Finetune Steps" array="false" enabledWhenValue="false">
+                    <clientProperties/>
+                    <constraints/>
+                </property>
+                <property type="string" required="true" selector="false" id="5b0823db-e35e-438d-89f7-b741d9e2a162" name="_FINETUNE_LOSS" displayName="Finetune Loss Function" array="false" enabledWhen="_FINETUNE_STEPS != 0" enabledWhenValue="true">
+                    <clientProperties/>
+                    <constraints>
+                        <choicelist enabledWhen="" enabledWhenValue="true">
+                            <choice value="default" displayValue="Default"/>
+                            <choice value="mae" displayValue="MAE"/>
+                            <choice value="mse" displayValue="MSE"/>
+                            <choice value="rmse" displayValue="RMSE"/>
+                            <choice value="mape" displayValue="MAPE"/>
+                            <choice value="smape" displayValue="SMAPE"/>
+                        </choicelist>
+                    </constraints>
+                </property>
+            </properties>
+        </group>
+    </properties>
+</validationModel>
